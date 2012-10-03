@@ -52,6 +52,7 @@ public class ApacheLogParser {
 
         Pattern findQuotes = Pattern.compile("^\"");
         Pattern findReferrerAgent = Pattern.compile("Referer|User-Agent");
+        Pattern findXForwardedFor = Pattern.compile("X-Forwarded-For");
         Pattern findPercent = Pattern.compile("^%.*t$");
 
         String[] elements = StringUtils.split(format, ' ');
@@ -76,9 +77,14 @@ public class ApacheLogParser {
                 }
             } else if (findPercent.matcher(element).find()) {
                 subPattern = "(\\[[^\\]]+\\])";
+            } else if (findXForwardedFor.matcher(element).find()) {
+                subPattern = "((?:\\S*,\\s)*\\S*)";
             } else if (element.equals("%U")) {
                 subPattern = "(.+?)";
+            } else if (element.equals("%_")) {
+                subPattern = "(.+)?";
             }
+
             subPatterns.add(subPattern);
         }
 
